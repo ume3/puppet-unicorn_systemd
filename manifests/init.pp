@@ -1,48 +1,73 @@
-# Class: unicorn_systemd
-# ===========================
+# == Class: unicorn_systemd
 #
-# Full description of class unicorn_systemd here.
+# This class install and configure systemd unit files for unicorn
 #
-# Parameters
-# ----------
+# === Parameters
 #
-# Document parameters here.
+# * `user`
+# The user to execute the processes as. Valid options: a string containing a valid username.
+# Default to 'nobody'.
 #
-# * `sample parameter`
-# Explanation of what this parameter affects and what it defaults to.
-# e.g. "Specify one or more upstream ntp servers as an array."
+# * `group
+# The group to execute the processes as. Valid options: a string containing a valid groupname.
+# Default to undef.
 #
-# Variables
-# ----------
+# * `working_directory`
+# The working directory for executed processes. Valid options: an absolute path.
+# Default to undef.
 #
-# Here you should define a list of variables that this module would require.
+# * `listen_streams`
+# The addresses to listen on for a stream. Valid options: an array of valid addresses.
+# Default to ['127.0.0.1:8080', '/var/run/unicorn.sock'].
 #
-# * `sample variable`
-#  Explanation of how this variable affects the function of this class and if
-#  it has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#  External Node Classifier as a comma separated list of hostnames." (Note,
-#  global variables should be avoided in favor of class parameters as
-#  of Puppet 2.6.)
+# * `exec_start`
+# The commands with their arguments that are executed for this service. Valid options: a string containing valid commands.
+# Default to undef.
 #
-# Examples
-# --------
+# * `service_ensure`
+# Whether the service should be enabled. Valid options: 'running', 'true', 'stopped', or 'false'.
+# Defaults to running.
+#
+# * `service_enable`
+# Whether the service should be enabled. Valid options: a boolean.
+# Defaults to true.
+#
+#
+# === Examples
 #
 # @example
 #    class { 'unicorn_systemd':
-#      servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
+#      user              => 'app',
+#      group             => 'app',
+#      working_directory => '/srv',
+#      listen_streams    => ['0.0.0.0:9000', '0.0.0.0:9001'],
+#      exec_start        => '/usr/local/bin/unicorn /srv/sample.ru',
 #    }
 #
-# Authors
-# -------
-#
-# Author Name <author@domain.com>
-#
-# Copyright
-# ---------
-#
-# Copyright 2016 Your name here, unless otherwise noted.
-#
-class unicorn_systemd {
+class unicorn_systemd (
+  $user              = 'nobody',
+  $group             = undef,
+  $working_directory = undef,
+  $listen_streams    = ['127.0.0.1:8080', '/var/run/unicorn.sock'],
+  $exec_start        = undef,
 
+  $service_ensure    = running,
+  $service_enable    = true,
+) {
+
+  class { 'unicorn_systemd::install':
+    user              => $user,
+    group             => $group,
+    working_directory => $working_directory,
+    listen_streams    => $listen_streams,
+    exec_start        => $exec_start,
+  }
+
+  class { 'unicorn_systemd::service':
+    service_ensure => $service_ensure,
+    service_enable => $service_enable,
+    subscribe      => Class['unicorn_systemd::install'],
+    require        => Class['unicorn_systemd::install'],
+  }
 
 }

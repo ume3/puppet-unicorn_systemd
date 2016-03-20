@@ -1,0 +1,13 @@
+# original: http://bogomips.org/unicorn.git/tree/examples/unicorn.socket?h=v5.0.1
+# ==> /etc/systemd/system/unicorn.socket <==
+[Unit]
+Description = unicorn sockets
+
+[Socket]
+<% @listen_streams.each do |listen_stream| -%>
+ListenStream = <%= listen_stream %>
+<% end -%>
+Service = unicorn@1.service
+
+[Install]
+WantedBy = sockets.target
