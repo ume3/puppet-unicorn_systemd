@@ -9,4 +9,22 @@
 # Learn more about module testing here:
 # https://docs.puppetlabs.com/guides/tests_smoke.html
 #
-include ::unicorn_systemd
+package {
+  ['rubygems', 'ruby-devel', 'make']:
+    ensure => installed,
+    before => Package['unicorn'];
+
+  'unicorn':
+    ensure   => installed,
+    provider => gem,
+    before   => Class['unicorn_systemd'];
+}
+
+file { '/srv/sample.ru':
+  ensure  => present,
+  content => file('unicorn_systemd/sample.ru'),
+  mode    => '0755',
+  before  => Class['unicorn_systemd'],
+}
+
+include 'unicorn_systemd'

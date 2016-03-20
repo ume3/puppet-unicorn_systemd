@@ -20,3 +20,6 @@ junit/
 ## Vagrant
 tests/modules/*
 !tests/modules/.keep
+Puppetfile.lock
+.librarian
+.tmp

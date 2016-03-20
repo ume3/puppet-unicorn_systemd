@@ -1,0 +1,5 @@
+---
+unicorn_systemd::exec_start: '/usr/local/bin/unicorn /srv/sample.ru'
+unicorn_systemd::working_directory: '/srv'
+unicorn_systemd::service_ensure: running
+unicorn_systemd::service_enable: true
