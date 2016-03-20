@@ -6,10 +6,15 @@
   "license": "MIT",
   "source": "https://github.com/hfm/puppet-unicorn_systemd",
   "project_page": "https://github.com/hfm/puppet-unicorn_systemd",
+  "tags": [
+    "unicorn"
+  ],
   "issues_url": "https://github.com/hfm/puppet-unicorn_systemd/issues",
   "dependencies": [
-    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+    {
+      "name": "puppetlabs-stdlib",
+      "version_requirement": ">= 1.0.0"
+    }
   ],
   "data_provider": null
 }
-
