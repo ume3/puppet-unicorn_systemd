@@ -16,3 +16,7 @@ Gemfile.lock
 # Beaker
 log/
 junit/
+
+## Vagrant
+tests/modules/*
+!tests/modules/.keep
