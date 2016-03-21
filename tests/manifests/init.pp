@@ -9,15 +9,35 @@
 # Learn more about module testing here:
 # https://docs.puppetlabs.com/guides/tests_smoke.html
 #
-package {
-  ['rubygems', 'ruby-devel', 'make']:
+
+if $::osfamily == 'RedHat' {
+  package { ['rubygems', 'ruby-devel', 'make']:
     ensure => installed,
     before => Package['unicorn'];
+  }
+} elsif $osfamily == 'Debian' {
+  package {
+    ['ruby', 'ruby-dev']:
+      ensure => installed,
+      before => Package['rubygems-update'];
 
-  'unicorn':
-    ensure   => installed,
-    provider => gem,
-    before   => Class['unicorn_systemd'];
+    'rubygems-update':
+      ensure   => installed,
+      provider => gem,
+      before   => Package['unicorn'],
+      notify   => Exec['update_rubygems'];
+  }
+
+  exec { 'update_rubygems':
+    path        => '/usr/local/bin:/usr/bin:/bin',
+    refreshonly => true,
+  }
+}
+
+package { 'unicorn':
+  ensure   => installed,
+  provider => gem,
+  before   => Class['unicorn_systemd'];
 }
 
 file { '/srv/sample.ru':
