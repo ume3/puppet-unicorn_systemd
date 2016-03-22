@@ -12,12 +12,10 @@ class unicorn_systemd::service (
       enable => $service_enable,
       before => Service['unicorn@1.service'];
 
-    'unicorn@1.service':
-      ensure => $service_ensure,
-      enable => $service_enable,
-      before => Service['unicorn@2.service'];
-
-    'unicorn@2.service':
+    [
+      'unicorn@1.service',
+      'unicorn@2.service',
+    ]:
       ensure => $service_ensure,
       enable => $service_enable;
   }
