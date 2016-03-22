@@ -1,9 +1,10 @@
 class unicorn_systemd::install (
-  $user              = $unicorn_systemd::user,
-  $group             = $unicorn_systemd::group,
-  $working_directory = $unicorn_systemd::working_directory,
-  $listen_streams    = $unicorn_systemd::listen_streams,
-  $exec_start        = $unicorn_systemd::exec_start,
+  $ensure            = present,
+  $user              = 'nobody',
+  $group             = undef,
+  $working_directory = undef,
+  $listen_streams    = ['127.0.0.1:8080', '/var/run/unicorn.sock'],
+  $exec_start        = undef,
 ){
 
   validate_string($user)
@@ -18,12 +19,14 @@ class unicorn_systemd::install (
 
   file {
     '/etc/systemd/system/unicorn.socket':
+      ensure  => $ensure,
       content => template('unicorn_systemd/unicorn.socket.erb'),
       owner   => 'root',
       group   => 'root',
       mode    => '0644';
 
     '/etc/systemd/system/unicorn@.service':
+      ensure  => $ensure,
       content => template('unicorn_systemd/unicorn@.service.erb'),
       owner   => 'root',
       group   => 'root',

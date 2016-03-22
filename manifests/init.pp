@@ -4,6 +4,10 @@
 #
 # === Parameters
 #
+# * `ensure`
+# Whether the unit files should exist. Valid options: present, absent, file.
+# Default to present.
+#
 # * `user`
 # The user to execute the processes as. Valid options: a string containing a valid username.
 # Default to 'nobody'.
@@ -45,6 +49,7 @@
 #    }
 #
 class unicorn_systemd (
+  $ensure            = present,
   $user              = 'nobody',
   $group             = undef,
   $working_directory = undef,
@@ -56,6 +61,7 @@ class unicorn_systemd (
 ) {
 
   class { 'unicorn_systemd::install':
+    ensure            => $ensure,
     user              => $user,
     group             => $group,
     working_directory => $working_directory,
