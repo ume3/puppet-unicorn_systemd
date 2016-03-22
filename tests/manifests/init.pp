@@ -17,27 +17,29 @@ if $::osfamily == 'RedHat' {
   }
 } elsif $osfamily == 'Debian' {
   package {
-    ['ruby', 'ruby-dev']:
+    ['build-essential', 'ruby', 'ruby-dev']:
       ensure => installed,
       before => Package['rubygems-update'];
 
     'rubygems-update':
-      ensure   => installed,
-      provider => gem,
-      before   => Package['unicorn'],
-      notify   => Exec['update_rubygems'];
+      ensure          => installed,
+      provider        => gem,
+      install_options => ['--no-document'],
+      before          => Package['unicorn'],
+      notify          => Exec['update_rubygems --no-document'];
   }
 
-  exec { 'update_rubygems':
+  exec { 'update_rubygems --no-document':
     path        => '/usr/local/bin:/usr/bin:/bin',
     refreshonly => true,
   }
 }
 
 package { 'unicorn':
-  ensure   => installed,
-  provider => gem,
-  before   => Class['unicorn_systemd'];
+  ensure          => installed,
+  provider        => gem,
+  install_options => ['--no-document'],
+  before          => Class['unicorn_systemd'];
 }
 
 file { '/srv/sample.ru':
