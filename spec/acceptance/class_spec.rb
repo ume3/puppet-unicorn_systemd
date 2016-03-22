@@ -23,7 +23,7 @@ describe 'unicorn class' do
         }
 
         exec { 'update_rubygems --no-document':
-          path        => '/usr/local/bin:/usr/bin:/bin',
+          path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
           refreshonly => true,
         }
       }
@@ -77,7 +77,7 @@ describe 'unicorn class' do
       end
     end
 
-    describe package('update_rubygems') do
+    describe package('rubygems-update') do
       it { should be_installed.by('gem')}
     end
   end

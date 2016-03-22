@@ -4,7 +4,7 @@ HOSTS:
     image: debian:jessie
     hypervisor: docker
     docker_image_commands:
-      - 'apt-get install -y sudo wget'
+      - 'apt-get install -y wget'
 CONFIG:
   type: foss
   masterless: true
