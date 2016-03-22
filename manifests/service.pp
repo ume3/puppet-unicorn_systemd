@@ -1,6 +1,6 @@
 class unicorn_systemd::service (
-  $service_ensure = $unicorn::service_ensure,
-  $service_enable = $unicorn::service_enable,
+  $service_ensure = running,
+  $service_enable = true,
 ) {
 
   validate_re($service_ensure, '^(true|running|false|stopped)$', 'This parameter should be true(running) or false(stopped).')
