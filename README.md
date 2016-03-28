@@ -42,7 +42,8 @@ class { 'unicorn_systemd':
   user              => 'app',
   working_directory => '/srv',
   listen_streams    => ['0.0.0.0:9000', '0.0.0.0:9001'],
-  exec_start        => '/usr/local/bin/unicorn /srv/sample.ru',
+  exec_start        => '/usr/local/bin/unicorn -E $RAILS_ENV /srv/sample.ru',
+  environment       => 'RAILS_ENV=production'
 }
 ```
 
@@ -55,7 +56,9 @@ unicorn_systemd::working_directory: /srv
 unicorn_systemd::listen_streams:
   - 0.0.0.0:9000
   - 0.0.0.0:9001
-unicorn_systemd::exec_start: /usr/local/bin/unicorn /srv/sample.ru
+unicorn_systemd::exec_start: /usr/local/bin/unicorn -E $RAILS_ENV /srv/sample.ru
+unicorn_systemd::environment:
+  RAILS_ENV: production
 ```
 
 ## Reference
