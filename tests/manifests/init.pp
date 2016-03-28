@@ -35,6 +35,13 @@ if $::osfamily == 'RedHat' {
   }
 }
 
+user { 'app':
+  ensure     => present,
+  managehome => true,
+  home       => '/srv',
+  before     => Class['unicorn_systemd'],
+}
+
 package { 'unicorn':
   ensure          => installed,
   provider        => gem,
