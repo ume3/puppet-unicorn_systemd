@@ -4,4 +4,6 @@ unicorn_systemd::working_directory: /srv
 unicorn_systemd::listen_streams:
   - 0.0.0.0:9000
   - 0.0.0.0:9001
-unicorn_systemd::exec_start: /usr/local/bin/unicorn /srv/sample.ru
+unicorn_systemd::exec_start: /usr/local/bin/unicorn -E $UNICORN_ENV /srv/sample.ru
+unicorn_systemd::environment:
+  UNICORN_ENV: tests

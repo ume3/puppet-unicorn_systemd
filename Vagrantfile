@@ -31,8 +31,6 @@ module VagrantPlugins
   end
 end
 
-require 'json'
-
 platforms = {
   centos7: 'puppetlabs/centos-7.2-64-puppet',
   jessie: 'puppetlabs/debian-8.2-64-puppet',
@@ -43,6 +41,10 @@ Vagrant.configure(2) do |config|
     config.cache.scope = :box
   end
 
+  require 'fileutils'
+  FileUtils.mkdir_p 'tests/modules'
+
+  require 'json'
   metadata = JSON.parse(File.read('metadata.json'))
   module_name = metadata['name'].split('-').last
 

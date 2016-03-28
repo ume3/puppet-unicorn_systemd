@@ -5,6 +5,7 @@ class unicorn_systemd::install (
   $working_directory = undef,
   $listen_streams    = ['127.0.0.1:8080', '/var/run/unicorn.sock'],
   $exec_start        = undef,
+  $environment       = {},
 ){
 
   validate_string($user)
@@ -16,6 +17,7 @@ class unicorn_systemd::install (
     validate_array($listen_streams)
   }
   validate_string($exec_start)
+  validate_hash($environment)
 
   file {
     '/etc/systemd/system/unicorn.socket':

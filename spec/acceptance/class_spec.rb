@@ -43,7 +43,8 @@ describe 'unicorn class' do
       }
 
       class { 'unicorn_systemd':
-        exec_start        => '/usr/local/bin/unicorn /srv/sample.ru',
+        exec_start        => '/usr/local/bin/unicorn -E $RAILS_ENV /srv/sample.ru',
+        environment       => { 'RAILS_ENV' => 'acceptance'},
         working_directory => '/srv',
         service_ensure    => running,
         service_enable    => true,
@@ -107,7 +108,8 @@ describe 'unicorn class' do
     it { should be_mode 644 }
     its(:content) { should match /^User = nobody$/ }
     its(:content) { should match %r|^WorkingDirectory = /srv$| }
-    its(:content) { should match %r|^ExecStart = /usr/local/bin/unicorn /srv/sample.ru$| }
+    its(:content) { should match %r|^ExecStart = /usr/local/bin/unicorn -E \$RAILS_ENV /srv/sample.ru$| }
+    its(:content) { should match /^Environment = "RAILS_ENV=acceptance"$/ }
   end
 
   describe service('unicorn.socket') do

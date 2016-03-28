@@ -28,6 +28,10 @@
 # The commands with their arguments that are executed for this service. Valid options: a string containing valid commands.
 # Default to undef.
 #
+# * `environment`
+# The environment variables for executed processes. Valid options: a hash of key-value pairs.
+# Default to {}.
+#
 # * `service_ensure`
 # Whether the service should be enabled. Valid options: 'running', 'true', 'stopped', or 'false'.
 # Defaults to running.
@@ -55,6 +59,7 @@ class unicorn_systemd (
   $working_directory = undef,
   $listen_streams    = ['127.0.0.1:8080', '/var/run/unicorn.sock'],
   $exec_start        = undef,
+  $environment       = {},
 
   $service_ensure    = running,
   $service_enable    = true,
@@ -67,6 +72,7 @@ class unicorn_systemd (
     working_directory => $working_directory,
     listen_streams    => $listen_streams,
     exec_start        => $exec_start,
+    environment       => $environment,
   }
 
   class { 'unicorn_systemd::service':
