@@ -22,6 +22,8 @@ WorkingDirectory = <%= @working_directory %>
 <% @environment.each do |key, value| -%>
 Environment = "<%= "#{key}=#{value}" %>"
 <% end unless @environment.empty? -%>
+# bundler users must use the "--keep-file-descriptors" switch, here:
+# ExecStart = bundle exec --keep-file-descriptors unicorn -c ...
 ExecStart = <%= @exec_start %>
 ExecReload = /bin/kill -HUP $MAINPID
 KillSignal = SIGQUIT

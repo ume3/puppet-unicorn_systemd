@@ -28,7 +28,7 @@ describe 'unicorn class' do
         }
       }
 
-      package { 'unicorn':
+      package { ['rack', 'unicorn']:
         ensure          => installed,
         provider        => gem,
         install_options => ['--no-document'],
