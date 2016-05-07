@@ -3,29 +3,14 @@ require 'spec_helper_acceptance'
 describe 'unicorn class' do
   let(:manifest) {
     <<-EOS
-      if $::osfamily == 'RedHat' {
-        package { ['rubygems', 'ruby-devel', 'make']:
-          ensure => installed,
-          before => Package['unicorn'];
-        }
-      } elsif $osfamily == 'Debian' {
-        package {
-          ['build-essential', 'ruby', 'ruby-dev']:
-            ensure => installed,
-            before => Package['rubygems-update'];
+      $pkgs = $osfamily ? {
+        'RedHat' => ['rubygems', 'ruby-devel', 'make'],
+        'Debian' => ['build-essential', 'ruby', 'ruby-dev'],
+      }
 
-          'rubygems-update':
-            ensure          => installed,
-            provider        => gem,
-            install_options => ['--no-document'],
-            before          => Package['unicorn'],
-            notify          => Exec['update_rubygems --no-document'];
-        }
-
-        exec { 'update_rubygems --no-document':
-          path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
-          refreshonly => true,
-        }
+      package { $pkgs:
+        ensure => installed,
+        before => Package['unicorn'],
       }
 
       package { ['rack', 'unicorn']:

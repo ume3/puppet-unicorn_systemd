@@ -1,3 +1,8 @@
+Release 1.1.3 (2016/05/07)
+---
+
+- [#3](https://github.com/hfm/puppet-unicorn_systemd/pull/3) Support Xenial
+
 Release 1.1.2 (2016/05/07)
 ---
 

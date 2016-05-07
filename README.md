@@ -97,6 +97,7 @@ This module has been tested on:
 - Scientific Linux 7
 - Debian 8
 - Ubuntu 15.10
+- Ubuntu 16.04
 
 ## Development
 
