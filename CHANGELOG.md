@@ -1,3 +1,8 @@
+Release 2.0.0 (2017/04/13)
+---
+
+- [#4](https://github.com/hfm/puppet-unicorn_systemd/pull/4) Renewal
+
 Release 1.1.4 (2016/05/07)
 ---
 
