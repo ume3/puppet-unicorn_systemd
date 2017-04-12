@@ -1,25 +1,9 @@
 language: ruby
+rvm: default
+sudo: required
+services: docker
 cache: bundler
-script:
-- bundle exec rake lint
-- bundle exec rake validate
-- bundle exec rake spec
-matrix:
-  include:
-  - rvm: 2.0.0
-    env: PUPPET_VERSION='~> 3.8.0'
-  - rvm: 2.3.1
-    env: PUPPET_VERSION='~> 4.4.0'
-  - rvm: default
-    sudo: required
-    services: docker
-    env: BEAKER_set=centos7
-    script: bundle exec rake beaker
-  - rvm: default
-    sudo: required
-    services: docker
-    env: BEAKER_set=xenial
-    script: bundle exec rake beaker
-notifications:
-  slack:
-    secure: dxtohKx+S38UfQ9qJkrlXi6KP+p/dlPk/JUi7LcRo2kvxcUAx+WXBqzcYiXb8nORnIKwlOWbuiJuUPwBumSAdzJUYx4Kuo0trOAp9pCXFQasVpvB+KtMvwoKim6/Lb59Oari6ur5F/Oj2mbVvo/NTu7wLCONP50lfvzmLQv8y1NHw5BflbgQZDJW5CW/Gjm0dovddHhGl5djrBZxMLgHoFYlQK3EshlUTNWl1vdezLwHxHcy5zEOgaPf6ggdiSXmLSIMSa1Hyu4s483k5MAqMgVv6PKO9h5zMYr074FkfQOeemIk25to5zLq4rbx7W8SEQ60ynu2FUURZjdKdIa3K3powWNyONXh/LDJBn7IwNj1SX6nLL0T+zfHgaIH1Xo/XS0iNsj96BWcewEpdpVmzEqIpxdhkyaJ4hPsVyG4rKRTW/lr2pt2LnG2j91eTTpAOc1T8ipy/5K1k3rIcZO+o5PCcnKqmUUz6hjABp9mNcbyE+J9Gd3v64lkCzmyF+XV66vPmoG98kwc0PU6WNJRgkyE4YlQYv+rarztUu2TZHpKBef9ENOLb7d96veDkx2Onpy0WcY1My0j88B3L/6WASvhH3Rh8LrAMMAj9socpJcZuGnWnn2xsFH4lIPwojr9gTuxAhiwBQZvS3LDw4+u2XYxgoxktVYDlWhL1T/v9fk=
+script: bundle exec rake test beaker
+env:
+  - BEAKER_set=centos7
+  - BEAKER_set=xenial

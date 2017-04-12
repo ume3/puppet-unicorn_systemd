@@ -53,33 +53,31 @@
 #    }
 #
 class unicorn_systemd (
-  $ensure            = present,
-  $user              = 'nobody',
-  $group             = undef,
-  $working_directory = undef,
-  $listen_streams    = ['127.0.0.1:8080', '/var/run/unicorn.sock'],
-  $exec_start        = undef,
-  $environment       = {},
-
-  $service_ensure    = running,
-  $service_enable    = true,
+  String $user,
+  String $group,
+  String $working_directory,
+  String $pidfile,
+  Hash[String, String] $environment,
+  String $exec_start,
+  String $ensure = present,
+  String $service_ensure = running,
+  Boolean $service_enable = true,
 ) {
 
-  class { 'unicorn_systemd::install':
-    ensure            => $ensure,
-    user              => $user,
-    group             => $group,
-    working_directory => $working_directory,
-    listen_streams    => $listen_streams,
-    exec_start        => $exec_start,
-    environment       => $environment,
+  include ::systemd
+
+  file { '/etc/systemd/system/unicorn.service':
+    ensure  => $ensure,
+    content => template('unicorn_systemd/unicorn.service.erb'),
+    owner   => 'root',
+    group   => 'root',
+    notify  => Exec['systemctl-daemon-reload'],
   }
 
-  class { 'unicorn_systemd::service':
-    service_ensure => $service_ensure,
-    service_enable => $service_enable,
-    subscribe      => Class['unicorn_systemd::install'],
-    require        => Class['unicorn_systemd::install'],
+  service { 'unicorn.service':
+    ensure  => $service_ensure,
+    enable  => $service_enable,
+    require => File['/etc/systemd/system/unicorn.service'],
   }
 
 }
