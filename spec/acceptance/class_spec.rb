@@ -2,37 +2,49 @@ require 'spec_helper_acceptance'
 
 describe 'unicorn class' do
   let(:manifest) {
-    <<-EOS
+    <<-'EOS'
       $pkgs = $osfamily ? {
-        'RedHat' => ['rubygems', 'ruby-devel', 'make'],
+        'RedHat' => ['rubygems', 'ruby-devel', 'gcc', 'make'],
         'Debian' => ['build-essential', 'ruby', 'ruby-dev'],
       }
 
-      package { $pkgs:
-        ensure => installed,
-        before => Package['unicorn'],
+      package {
+        $pkgs:
+          ensure => installed,
+          before => Package['unicorn'];
+
+        'rack':
+          ensure   => '1.6.5',
+          provider => gem;
+
+        'unicorn':
+          ensure   => installed,
+          provider => gem;
       }
 
-      package { ['rack', 'unicorn']:
-        ensure          => installed,
-        provider        => gem,
-        install_options => ['--no-document'],
-        before          => Class['unicorn_systemd'];
-      }
+      file {
+        '/srv/sample.conf.rb':
+          content => 'pid "/var/run/unicorn.pid"';
 
-      file { '/srv/sample.ru':
-        ensure  => present,
-        content => file('unicorn_systemd/sample.ru'),
-        mode    => '0755',
-        before  => Class['unicorn_systemd'];
+        '/srv/sample.ru':
+          content => 'run lambda { |env| [200, {"Content-Type" => "text/plain"}, ["ppid:#{Process.ppid}\n"]] }';
       }
 
       class { 'unicorn_systemd':
-        exec_start        => '/usr/local/bin/unicorn -E $RAILS_ENV /srv/sample.ru',
-        environment       => { 'RAILS_ENV' => 'acceptance'},
+        user              => 'root',
+        group             => 'root',
         working_directory => '/srv',
-        service_ensure    => running,
-        service_enable    => true,
+        pidfile           => '/var/run/unicorn.pid',
+        environment       => {
+          'RAILS_ENV'  => 'acceptance',
+          'UNICORN_RB' => 'sample.conf.rb',
+        },
+        exec_start        => '/usr/local/bin/unicorn -E $RAILS_ENV -c $UNICORN_RB sample.ru',
+        require           => [
+          File['/srv/sample.conf.rb'],
+          File['/srv/sample.ru'],
+          Package['unicorn'],
+        ],
       }
     EOS
   }
@@ -48,61 +60,48 @@ describe 'unicorn class' do
     expect(result.exit_code).to eq 0
   end
 
-  context 'RedHat', if: os[:family] == 'redhat' do
-    %w(rubygems ruby-devel make).each do |pkg|
-      describe package(pkg) do
-        it { should be_installed }
-      end
+  %w(rubygems ruby-devel make).each do |pkg|
+    describe package(pkg), if: os[:family] == 'redhat' do
+      it { should be_installed }
     end
   end
 
-  context 'Debian', if: os[:family] == 'debian' do
-    %w(build-essential ruby ruby-dev).each do |pkg|
-      describe package(pkg) do
-        it { should be_installed }
-      end
+  %w(build-essential ruby ruby-dev).each do |pkg|
+    describe package(pkg), if: os[:family] == 'debian' do
+      it { should be_installed }
     end
+  end
 
-    describe package('rubygems-update') do
-      it { should be_installed.by('gem')}
-    end
+  describe package('rubygems-update'), if: os[:family] == 'debian' do
+    it { should be_installed.by('gem') }
   end
 
   describe package('unicorn') do
-    it { should be_installed.by('gem')}
+    it { should be_installed.by('gem') }
+  end
+
+  describe file('/srv/sample.conf.rb') do
+    it { should be_file }
   end
 
   describe file('/srv/sample.ru') do
     it { should be_file }
-    it { should be_mode 755 }
   end
 
-  describe file('/etc/systemd/system/unicorn.socket') do
+  describe file('/etc/systemd/system/unicorn.service') do
     it { should be_file }
     it { should be_owned_by 'root' }
     it { should be_grouped_into 'root' }
-    it { should be_mode 644 }
-    its(:content) { should match %r|^ListenStream = 127.0.0.1:8080$| }
-    its(:content) { should match %r|^ListenStream = /var/run/unicorn.sock$| }
+    its(:content) { should match /^User=root$/ }
+    its(:content) { should match /^Group=root$/ }
+    its(:content) { should match %r|^WorkingDirectory=/srv$| }
+    its(:content) { should match %r|^PIDFile=/var/run/unicorn.pid$| }
+    its(:content) { should match %r|^ExecStart=/usr/local/bin/unicorn -E \$RAILS_ENV -c \$UNICORN_RB sample.ru$| }
+    its(:content) { should match /^Environment="RAILS_ENV=acceptance"$/ }
+    its(:content) { should match /^Environment="UNICORN_RB=sample.conf.rb"$/ }
   end
 
-  describe file('/etc/systemd/system/unicorn@.service') do
-    it { should be_file }
-    it { should be_owned_by 'root' }
-    it { should be_grouped_into 'root' }
-    it { should be_mode 644 }
-    its(:content) { should match /^User = nobody$/ }
-    its(:content) { should match %r|^WorkingDirectory = /srv$| }
-    its(:content) { should match %r|^ExecStart = /usr/local/bin/unicorn -E \$RAILS_ENV /srv/sample.ru$| }
-    its(:content) { should match /^Environment = "RAILS_ENV=acceptance"$/ }
-  end
-
-  describe service('unicorn.socket') do
-    it { should be_enabled }
-    it { should be_running }
-  end
-
-  describe service("unicorn@1.service") do
+  describe service('unicorn.service') do
     it { should be_enabled }
     it { should be_running }
   end

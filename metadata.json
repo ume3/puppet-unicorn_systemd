@@ -14,8 +14,8 @@
   "issues_url": "https://github.com/hfm/puppet-unicorn_systemd/issues",
   "dependencies": [
     {
-      "name": "puppetlabs-stdlib",
-      "version_requirement": ">= 3.0.0 < 5.0.0"
+      "name": "camptocamp-systemd",
+      "version_requirement": ">= 0.0.0 < 1.0.0"
     }
   ],
   "operatingsystem_support": [

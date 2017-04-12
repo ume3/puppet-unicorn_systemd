@@ -1,0 +1,28 @@
+# original: http://bogomips.org/unicorn.git/tree/examples/unicorn@.service?h=v5.0.1
+# ==> /etc/systemd/system/unicorn@.service <==
+# Since SIGUSR2 upgrades do not work under systemd, this service file
+# allows starting two simultaneous services during upgrade time
+# (e.g. unicorn@1 unicorn@2) with the intention that they take
+# turns running in-between upgrades.  This should allow upgrading
+# without downtime.
+
+[Unit]
+Description=unicorn: Rack HTTP server for fast clients and Unix
+Documentation=https://bogomips.org/unicorn/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=<%= @user %>
+Group=<%= @group %>
+WorkingDirectory=<%= @working_directory %>
+PIDFile=<%= @pidfile %>
+<% @environment.each do |key, value| -%>
+Environment="<%= "#{key}=#{value}" %>"
+<% end unless @environment.empty? -%>
+ExecStart=<%= @exec_start %>
+ExecReload=/bin/kill -USR2 $MAINPID
+KillSignal=SIGQUIT
+
+[Install]
+WantedBy=multi-user.target

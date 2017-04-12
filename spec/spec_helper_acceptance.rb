@@ -13,7 +13,7 @@ RSpec.configure do |c|
 
     # Install dependencies
     hosts.each do |host|
-      on(host, puppet('module', 'install', 'puppetlabs-stdlib'))
+      on(host, puppet('module', 'install', 'camptocamp-systemd'))
     end
   end
 end
