@@ -1,3 +1,8 @@
+Release 2.0.1 (2017/04/13)
+---
+
+- [#5](https://github.com/hfm/puppet-unicorn_systemd/pull/5) Remove .service suffix from unicorn service resource
+
 Release 2.0.0 (2017/04/13)
 ---
 
