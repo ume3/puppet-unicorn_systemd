@@ -101,7 +101,7 @@ describe 'unicorn class' do
     its(:content) { should match /^Environment="UNICORN_RB=sample.conf.rb"$/ }
   end
 
-  describe service('unicorn.service') do
+  describe service('unicorn') do
     it { should be_enabled }
     it { should be_running }
   end

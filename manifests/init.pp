@@ -24,7 +24,7 @@ class unicorn_systemd (
     notify  => Exec['systemctl-daemon-reload'],
   }
 
-  service { 'unicorn.service':
+  service { 'unicorn':
     ensure  => $service_ensure,
     enable  => $service_enable,
     require => File['/etc/systemd/system/unicorn.service'],
