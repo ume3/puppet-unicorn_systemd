@@ -6,12 +6,6 @@
   "license": "MIT",
   "source": "https://github.com/hfm/puppet-unicorn_systemd",
   "project_page": "https://github.com/hfm/puppet-unicorn_systemd",
-  "tags": [
-    "unicorn",
-    "rack",
-    "ruby",
-    "systemd"
-  ],
   "issues_url": "https://github.com/hfm/puppet-unicorn_systemd/issues",
   "dependencies": [
     {
@@ -52,5 +46,19 @@
       ]
     }
   ],
-  "data_provider": null
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 4.7.0 < 6.0.0"
+    }
+  ],
+  "tags": [
+    "unicorn",
+    "rack",
+    "ruby",
+    "systemd"
+  ],
+  "pdk-version": "1.6.1",
+  "template-url": "file:///opt/puppetlabs/pdk/share/cache/pdk-templates.git",
+  "template-ref": "1.6.1-0-g6b0d497"
 }
