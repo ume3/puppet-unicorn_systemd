@@ -1,3 +1,7 @@
+## [v2.1.0](https://github.com/hfm/puppet-unicorn_systemd/compare/v2.0.1...v2.1.0) (2018-08-11)
+
+* pdk [#6](https://github.com/hfm/puppet-unicorn_systemd/pull/6) ([hfm](https://github.com/hfm))
+
 Release 2.0.1 (2017/04/13)
 ---
 

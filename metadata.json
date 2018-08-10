@@ -1,6 +1,6 @@
 {
   "name": "hfm-unicorn_systemd",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "author": "hfm",
   "summary": "Manage systemd unit files of unicorn.",
   "license": "MIT",
