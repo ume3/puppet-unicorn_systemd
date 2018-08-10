@@ -1,7 +1,7 @@
 require 'spec_helper_acceptance'
 
 describe 'unicorn class' do
-  let(:manifest) {
+  let(:manifest) do
     <<-'EOS'
       $pkgs = $osfamily ? {
         'RedHat' => ['rubygems', 'ruby-devel', 'gcc', 'make'],
@@ -47,62 +47,62 @@ describe 'unicorn class' do
         ],
       }
     EOS
-  }
+  end
 
-  it 'should work without errors' do
-    result = apply_manifest(manifest, :acceptable_exit_codes => [0, 2], :catch_failures => true)
+  it 'works without errors' do
+    result = apply_manifest(manifest, acceptable_exit_codes: [0, 2], catch_failures: true)
     expect(result.exit_code).not_to eq 4
     expect(result.exit_code).not_to eq 6
   end
 
-  it 'should run a second time without changes' do
+  it 'runs a second time without changes' do
     result = apply_manifest(manifest)
     expect(result.exit_code).to eq 0
   end
 
-  %w(rubygems ruby-devel make).each do |pkg|
+  ['rubygems', 'ruby-devel', 'make'].each do |pkg|
     describe package(pkg), if: os[:family] == 'redhat' do
-      it { should be_installed }
+      it { is_expected.to be_installed }
     end
   end
 
-  %w(build-essential ruby ruby-dev).each do |pkg|
+  ['build-essential', 'ruby', 'ruby-dev'].each do |pkg|
     describe package(pkg), if: os[:family] == 'debian' do
-      it { should be_installed }
+      it { is_expected.to be_installed }
     end
   end
 
   describe package('rubygems-update'), if: os[:family] == 'debian' do
-    it { should be_installed.by('gem') }
+    it { is_expected.to be_installed.by('gem') }
   end
 
   describe package('unicorn') do
-    it { should be_installed.by('gem') }
+    it { is_expected.to be_installed.by('gem') }
   end
 
   describe file('/srv/sample.conf.rb') do
-    it { should be_file }
+    it { is_expected.to be_file }
   end
 
   describe file('/srv/sample.ru') do
-    it { should be_file }
+    it { is_expected.to be_file }
   end
 
   describe file('/etc/systemd/system/unicorn.service') do
-    it { should be_file }
-    it { should be_owned_by 'root' }
-    it { should be_grouped_into 'root' }
-    its(:content) { should match /^User=root$/ }
-    its(:content) { should match /^Group=root$/ }
-    its(:content) { should match %r|^WorkingDirectory=/srv$| }
-    its(:content) { should match %r|^PIDFile=/var/run/unicorn.pid$| }
-    its(:content) { should match %r|^ExecStart=/usr/local/bin/unicorn -E \$RAILS_ENV -c \$UNICORN_RB sample.ru$| }
-    its(:content) { should match /^Environment="RAILS_ENV=acceptance"$/ }
-    its(:content) { should match /^Environment="UNICORN_RB=sample.conf.rb"$/ }
+    it { is_expected.to be_file }
+    it { is_expected.to be_owned_by 'root' }
+    it { is_expected.to be_grouped_into 'root' }
+    its(:content) { is_expected.to match %r{^User=root$} }
+    its(:content) { is_expected.to match %r{^Group=root$} }
+    its(:content) { is_expected.to match %r{^WorkingDirectory=/srv$} }
+    its(:content) { is_expected.to match %r{^PIDFile=/var/run/unicorn.pid$} }
+    its(:content) { is_expected.to match %r{^ExecStart=/usr/local/bin/unicorn -E \$RAILS_ENV -c \$UNICORN_RB sample.ru$} }
+    its(:content) { is_expected.to match %r{^Environment="RAILS_ENV=acceptance"$} }
+    its(:content) { is_expected.to match %r{^Environment="UNICORN_RB=sample.conf.rb"$} }
   end
 
   describe service('unicorn') do
-    it { should be_enabled }
-    it { should be_running }
+    it { is_expected.to be_enabled }
+    it { is_expected.to be_running }
   end
 end
