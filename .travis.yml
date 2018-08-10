@@ -11,7 +11,6 @@ before_install:
   - bundle -v
 script:
   - 'bundle exec rake $CHECK'
-bundler_args: --without system_tests
 rvm:
   - 2.4.4
 env:
@@ -27,6 +26,7 @@ matrix:
     -
       env: PUPPET_GEM_VERSION="~> 4.0" CHECK=parallel_spec
       rvm: 2.1.9
+      bundler_args: --without system_tests
     -
       sudo: required
       services: docker
